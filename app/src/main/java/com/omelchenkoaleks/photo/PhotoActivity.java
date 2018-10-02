@@ -3,6 +3,7 @@ package com.omelchenkoaleks.photo;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -10,7 +11,9 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 public class PhotoActivity extends Activity {
@@ -19,6 +22,8 @@ public class PhotoActivity extends Activity {
     private static final int REQUEST_CODE_PHOTO = 1;
     private static final String TAG = "myLogs";
     ImageView ivPhoto;
+    byte[] byteArray;
+    TextView textViewTest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +32,8 @@ public class PhotoActivity extends Activity {
 
         createDirectory();
         ivPhoto = findViewById(R.id.ivPhoto);
+
+        textViewTest = findViewById(R.id.tvTestByteArray);
     }
 
     @Override
@@ -46,6 +53,8 @@ public class PhotoActivity extends Activity {
                             Log.d(TAG, "bitmap " + bitmap.getWidth() + " x "
                                     + bitmap.getHeight());
                             ivPhoto.setImageBitmap(bitmap);
+                            generateByteArray(bitmap);
+                            textViewTest.setText("" + byteArray.length);
                         }
                     }
                 }
@@ -56,9 +65,19 @@ public class PhotoActivity extends Activity {
 
     }
 
+    private void generateByteArray(Bitmap bitmap) {
+//        Bitmap bmp = BitmapFactory.decodeResource(getResources(), R.id.ivPhoto);
+//        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+//        bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+//        byteArray = stream.toByteArray();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+        byteArray = stream.toByteArray();
+    }
+
     public void onClickPhoto(View view) {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, generateFileUri(PHOTO));
+//        intent.putExtra(MediaStore.EXTRA_OUTPUT, generateFileUri(PHOTO));
         startActivityForResult(intent, REQUEST_CODE_PHOTO);
     }
 
